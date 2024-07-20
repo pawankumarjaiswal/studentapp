@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: springboot-app
   labels:
     app: springboot-app
-  name: springboot-app
 spec:
-  replicas:2
+  replicas: 2
   selector:
     matchLabels:
       app: springboot-app
@@ -18,20 +18,20 @@ spec:
       - name: my-springboot-app
         image: public.ecr.aws/n4f2g6n0/studentapp
         imagePullPolicy: Always
-# service type loadbalancer       
+        ports:
+        - containerPort: 8080 # Ensure this matches the port your Spring Boot app listens on
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: springboot-app
   labels:
     app: springboot-app
-    k8s-app: springboot-app
-  name: springboot-app
 spec:
-  ports:
-  - name: http
-    port: 80
-    protocol: TCP
   type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080 # Ensure this matches the container port your app listens on
+    protocol: TCP
   selector:
     app: springboot-app
